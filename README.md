@@ -9,7 +9,7 @@
 修改运行配置，加入参数，在idea菜单栏依次点击：RUN->EditConfiguration->WordCount->program arguments，输入
 
 ```
-input/
+inputs/wordCountInputs/
 output
 ```
 

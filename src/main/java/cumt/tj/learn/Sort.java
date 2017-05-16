@@ -47,7 +47,7 @@ public class Sort {
             extends Reducer<IntWritable,IntWritable,IntWritable,IntWritable> {
 
         //index记录数字的行号，即排位
-        private IntWritable index = new IntWritable(1);
+        private static IntWritable index = new IntWritable(1);
 
         public void reduce(IntWritable key, Iterable<IntWritable> values,
                            Context context
