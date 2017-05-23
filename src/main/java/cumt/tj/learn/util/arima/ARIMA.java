@@ -4,6 +4,10 @@ package cumt.tj.learn.util.arima;
 import java.util.Random;
 import java.util.Vector;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.util.ArrayList;
+import java.util.Scanner;
 
 public class ARIMA {
 
@@ -15,16 +19,56 @@ public class ARIMA {
 	Vector<double[]> bestarmaARMAcoe=new Vector<double[]>();
 	
 /**
- * ¹¹Ôìº¯Êı
- * @param originalData Ô­Ê¼Ê±¼äĞòÁĞÊı¾İ
+ * æ„é€ å‡½æ•°
+ * @param originalData åŸå§‹æ—¶é—´åºåˆ—æ•°æ®
  */
 	public ARIMA(double [] originalData)
 	{
 		this.originalData=originalData;
 	}
+
+	/**
+	 * å¯¹æ–‡ä»¶ä¸­åŒ…å«æ—¶é—´åºåˆ—è¿›è¡Œé¢„æµ‹
+	 * ç»“æœæ‰“å°åˆ°æ§åˆ¶å°
+	 * @param inputfile è¾“å…¥æ–‡ä»¶
+	 */
+	public static void prediction(String inputfile) {
+
+		Scanner ino=null;
+
+		try {
+			ArrayList<Double> arraylist=new ArrayList<Double>();
+//			ino=new Scanner(new File("inputs/GasPrediction/gas"));
+			ino=new Scanner(new File(inputfile));
+			while(ino.hasNext())
+			{
+				arraylist.add(Double.parseDouble(ino.next()));
+			}
+			double[] dataArray=new double[arraylist.size()-1];
+			for(int i=0;i<arraylist.size()-1;i++)
+				dataArray[i]=arraylist.get(i);
+
+			//System.out.println(arraylist.size());
+
+			ARIMA arima=new ARIMA(dataArray);
+
+			int []model=arima.getARIMAmodel();
+			System.out.println("Best model is [p,q]="+"["+model[0]+" "+model[1]+"]");
+			System.out.println("Predict value="+arima.aftDeal(arima.predictValue(model[0],model[1])));
+			System.out.println("Predict error="+(arima.aftDeal(arima.predictValue(model[0],model[1]))-arraylist.get(arraylist.size()-1))/arraylist.get(arraylist.size()-1)*100+"%");
+
+			//	String[] str = (String[])list1.toArray(new String[0]);
+
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}finally{
+			ino.close();
+		}
+	}
 /**
- * Ô­Ê¼Êı¾İ±ê×¼»¯´¦Àí£ºÒ»½×¼¾½ÚĞÔ²î·Ö
- * @return ²î·Ö¹ıºóµÄÊı¾İ
+ * åŸå§‹æ•°æ®æ ‡å‡†åŒ–å¤„ç†ï¼šä¸€é˜¶å­£èŠ‚æ€§å·®åˆ†
+ * @return å·®åˆ†è¿‡åçš„æ•°æ®
  */ 
 	public double[] preDealDif()
 	{
@@ -39,9 +83,9 @@ public class ARIMA {
 		return tempData;
 	}
 /**
- * Ô­Ê¼Êı¾İ±ê×¼»¯´¦Àí£ºZ-Score¹éÒ»»¯
- * @param ´ı´¦ÀíÊı¾İ
- * @return ¹éÒ»»¯¹ıºóµÄÊı¾İ
+ * åŸå§‹æ•°æ®æ ‡å‡†åŒ–å¤„ç†ï¼šZ-Scoreå½’ä¸€åŒ–
+ * @param tempData å¾…å¤„ç†æ•°æ®
+ * @return å½’ä¸€åŒ–è¿‡åçš„æ•°æ®
  */
 	public double[] preDealNor(double[] tempData)
 	{
@@ -57,36 +101,36 @@ public class ARIMA {
 		return tempData;
 	}
 /**
-* µÃµ½ARMAÄ£ĞÍ=[p,q]
- * @return ARMAÄ£ĞÍµÄ½×ÊıĞÅÏ¢
+* å¾—åˆ°ARMAæ¨¡å‹=[p,q]
+ * @return ARMAæ¨¡å‹çš„é˜¶æ•°ä¿¡æ¯
  */
 	public int[] getARIMAmodel()
 	{
-		double[] stdoriginalData=this.preDealDif();//Ô­Ê¼Êı¾İ²î·Ö´¦Àí
+		double[] stdoriginalData=this.preDealDif();//åŸå§‹æ•°æ®å·®åˆ†å¤„ç†
 		
 		int paraType=0;
 		double minAIC=9999999;
 		int bestModelindex=0;
 		int[][] model=new int[][]{{0,1},{1,0},{1,1},{0,2},{2,0},{2,2},{1,2},{2,1}};//,{3,0},{0,3},{3,1},{1,3},{3,2},{2,3},{3,3}};//,{4,0},{0,4},{4,1},{1,4},{4,2},{2,4},{4,3},{3,4},{4,4}};
-		//¶Ô8ÖÖÄ£ĞÍ½øĞĞµü´ú£¬Ñ¡³öAICÖµ×îĞ¡µÄÄ£ĞÍ×÷ÎªÎÒÃÇµÄÄ£ĞÍ
+		//å¯¹8ç§æ¨¡å‹è¿›è¡Œè¿­ä»£ï¼Œé€‰å‡ºAICå€¼æœ€å°çš„æ¨¡å‹ä½œä¸ºæˆ‘ä»¬çš„æ¨¡å‹
 		for(int i=0;i<model.length;i++)
 		{
 			if(model[i][0]==0)
 			{
 				MA ma=new MA(stdoriginalData, model[i][1]);
-				armaARMAcoe=ma.MAmodel(); //ÄÃµ½maÄ£ĞÍµÄ²ÎÊı
+				armaARMAcoe=ma.MAmodel(); //æ‹¿åˆ°maæ¨¡å‹çš„å‚æ•°
 				paraType=1;
 			}
 			else if(model[i][1]==0)
 			{
 				AR ar=new AR(stdoriginalData, model[i][0]);
-				armaARMAcoe=ar.ARmodel(); //ÄÃµ½arÄ£ĞÍµÄ²ÎÊı
+				armaARMAcoe=ar.ARmodel(); //æ‹¿åˆ°aræ¨¡å‹çš„å‚æ•°
 				paraType=2;
 			}
 			else
 			{
 				ARMA arma=new ARMA(stdoriginalData, model[i][0], model[i][1]);
-				armaARMAcoe=arma.ARMAmodel();//ÄÃµ½armaÄ£ĞÍµÄ²ÎÊı
+				armaARMAcoe=arma.ARMAmodel();//æ‹¿åˆ°armaæ¨¡å‹çš„å‚æ•°
 				paraType=3;
 			}
 			
@@ -104,11 +148,11 @@ public class ARIMA {
 		return model[bestModelindex];
  	}
 /**
- * ¼ÆËãARMAÄ£ĞÍµÄAIC
- * @param para ×°ÔØÄ£ĞÍµÄ²ÎÊıĞÅÏ¢
- * @param stdoriginalData   Ô¤´¦Àí¹ıºóµÄÔ­Ê¼Êı¾İ
- * @param type 1£ºMA£»2£ºAR£»3£ºARMA
- * @return Ä£ĞÍµÄAICÖµ
+ * è®¡ç®—ARMAæ¨¡å‹çš„AIC
+ * @param para è£…è½½æ¨¡å‹çš„å‚æ•°ä¿¡æ¯
+ * @param stdoriginalData   é¢„å¤„ç†è¿‡åçš„åŸå§‹æ•°æ®
+ * @param type 1ï¼šMAï¼›2ï¼šARï¼›3ï¼šARMA
+ * @return æ¨¡å‹çš„AICå€¼
  */
 	public double getmodelAIC(Vector<double[]> para,double[] stdoriginalData,int type)
 	{
@@ -134,18 +178,18 @@ public class ARIMA {
 					temp+=maPara[i]*err[i];
 				}
 			
-				//²úÉú¸÷¸öÊ±¿ÌµÄÔëÉù
+				//äº§ç”Ÿå„ä¸ªæ—¶åˆ»çš„å™ªå£°
 				for(int j=q-1;j>0;j--)
 				{
 					err[j]=err[j-1];
 				}
 				err[0]=random.nextGaussian()*Math.sqrt(maPara[0]);
 				
-				//¹À¼ÆµÄ·½²îÖ®ºÍ
+				//ä¼°è®¡çš„æ–¹å·®ä¹‹å’Œ
 				sumerr+=(stdoriginalData[k]-(temp))*(stdoriginalData[k]-(temp));
 				
 			}
-			//return  (n-(q-1))*Math.log(sumerr/(n-(q-1)))+(q)*Math.log(n-(q-1));//AIC ×îĞ¡¶ş³Ë¹À¼Æ
+			//return  (n-(q-1))*Math.log(sumerr/(n-(q-1)))+(q)*Math.log(n-(q-1));//AIC æœ€å°äºŒä¹˜ä¼°è®¡
 			return (n-(q-1))*Math.log(sumerr/(n-(q-1)))+(q+1)*2;
 		}
 		else if(type==2)
@@ -159,11 +203,11 @@ public class ARIMA {
 				{
 					temp+=arPara[i]*stdoriginalData[k-i-1];
 				}
-				//¹À¼ÆµÄ·½²îÖ®ºÍ
+				//ä¼°è®¡çš„æ–¹å·®ä¹‹å’Œ
 				sumerr+=(stdoriginalData[k]-temp)*(stdoriginalData[k]-temp);
 			}
 			return (n-(q-1))*Math.log(sumerr/(n-(q-1)))+(p+1)*2;
-			//return (n-(p-1))*Math.log(sumerr/(n-(p-1)))+(p)*Math.log(n-(p-1));//AIC ×îĞ¡¶ş³Ë¹À¼Æ
+			//return (n-(p-1))*Math.log(sumerr/(n-(p-1)))+(p)*Math.log(n-(p-1));//AIC æœ€å°äºŒä¹˜ä¼°è®¡
 		}
 		else
 		{
@@ -187,24 +231,24 @@ public class ARIMA {
 					temp2+=maPara[i]*err[i];
 				}
 			
-				//²úÉú¸÷¸öÊ±¿ÌµÄÔëÉù
+				//äº§ç”Ÿå„ä¸ªæ—¶åˆ»çš„å™ªå£°
 				for(int j=q-1;j>0;j--)
 				{
 					err[j]=err[j-1];
 				}
 				//System.out.println("predictBeforeDiff="+1);
 				err[0]=random.nextGaussian()*Math.sqrt(maPara[0]);
-				//¹À¼ÆµÄ·½²îÖ®ºÍ
+				//ä¼°è®¡çš„æ–¹å·®ä¹‹å’Œ
 				sumerr+=(stdoriginalData[k]-(temp2+temp))*(stdoriginalData[k]-(temp2+temp));
 			}
 			return (n-(q-1))*Math.log(sumerr/(n-(q-1)))+(p+q)*2;
-			//return (n-(p-1))*Math.log(sumerr/(n-(p-1)))+(p+q-1)*Math.log(n-(p-1));//AIC ×îĞ¡¶ş³Ë¹À¼Æ
+			//return (n-(p-1))*Math.log(sumerr/(n-(p-1)))+(p+q-1)*Math.log(n-(p-1));//AIC æœ€å°äºŒä¹˜ä¼°è®¡
 		}
 	}
 /**
- * ¶ÔÔ¤²âÖµ½øĞĞ·´²î·Ö´¦Àí
- * @param predictValue Ô¤²âµÄÖµ
- * @return ·´²î·Ö¹ıºóµÄÔ¤²âÖµ
+ * å¯¹é¢„æµ‹å€¼è¿›è¡Œåå·®åˆ†å¤„ç†
+ * @param predictValue é¢„æµ‹çš„å€¼
+ * @return åå·®åˆ†è¿‡åçš„é¢„æµ‹å€¼
  */
 	public int aftDeal(int predictValue)
 	{
@@ -212,10 +256,10 @@ public class ARIMA {
 		return (int)(predictValue+originalData[originalData.length-7]);
 	}
 /**
- * ½øĞĞÒ»²½Ô¤²â
- * @param p ARMAÄ£ĞÍµÄARµÄ½×Êı
- * @param q ARMAÄ£ĞÍµÄMAµÄ½×Êı
- * @return Ô¤²âÖµ
+ * è¿›è¡Œä¸€æ­¥é¢„æµ‹
+ * @param p ARMAæ¨¡å‹çš„ARçš„é˜¶æ•°
+ * @param q ARMAæ¨¡å‹çš„MAçš„é˜¶æ•°
+ * @return é¢„æµ‹å€¼
  */
 	public int predictValue(int p,int q)
 	{
@@ -236,14 +280,14 @@ public class ARIMA {
 				{
 					temp+=maPara[i]*err[i];
 				}
-				//²úÉú¸÷¸öÊ±¿ÌµÄÔëÉù
+				//äº§ç”Ÿå„ä¸ªæ—¶åˆ»çš„å™ªå£°
 				for(int j=q;j>0;j--)
 				{
 					err[j]=err[j-1];
 				}
 				err[0]=random.nextGaussian()*Math.sqrt(maPara[0]);
 			}
-			predict=(int)(temp); //²úÉúÔ¤²â
+			predict=(int)(temp); //äº§ç”Ÿé¢„æµ‹
 		}
 		else if(q==0)
 		{
@@ -278,7 +322,7 @@ public class ARIMA {
 					temp2+=maPara[i]*err[i];
 				}
 			
-				//²úÉú¸÷¸öÊ±¿ÌµÄÔëÉù
+				//äº§ç”Ÿå„ä¸ªæ—¶åˆ»çš„å™ªå£°
 				for(int j=q;j>0;j--)
 				{
 					err[j]=err[j-1];
@@ -295,19 +339,19 @@ public class ARIMA {
 		return predict;
 	}
 /**
- * ¼ÆËãMAÄ£ĞÍµÄ²ÎÊı
- * @param autocorData ×ÔÏà¹ØÏµÊıGrma
- * @param q MAÄ£ĞÍµÄ½×Êı
- * @return ·µ»ØMAÄ£ĞÍµÄ²ÎÊı
+ * è®¡ç®—MAæ¨¡å‹çš„å‚æ•°
+ * @param autocorData è‡ªç›¸å…³ç³»æ•°Grma
+ * @param q MAæ¨¡å‹çš„é˜¶æ•°
+ * @return è¿”å›MAæ¨¡å‹çš„å‚æ•°
  */
 	public double[] getMApara(double[] autocorData,int q)
 	{
-		double[] maPara=new double[q+1];//µÚÒ»¸ö´æ·ÅÔëÉù²ÎÊı£¬ºóÃæq¸ö´æ·Åma²ÎÊısigma2,ma1,ma2...
+		double[] maPara=new double[q+1];//ç¬¬ä¸€ä¸ªå­˜æ”¾å™ªå£°å‚æ•°ï¼Œåé¢qä¸ªå­˜æ”¾maå‚æ•°sigma2,ma1,ma2...
 		double[] tempmaPara=maPara;
 		double temp=0;
 		boolean iterationFlag=true;
-		//½â·½³Ì×é
-		//µü´ú·¨½â·½³Ì×é
+		//è§£æ–¹ç¨‹ç»„
+		//è¿­ä»£æ³•è§£æ–¹ç¨‹ç»„
 		System.out.println("autocorData[0]"+autocorData[0]);
 		while(iterationFlag)
 		{
