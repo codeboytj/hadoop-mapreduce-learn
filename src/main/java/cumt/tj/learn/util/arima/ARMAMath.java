@@ -38,15 +38,15 @@ public class ARMAMath
 	}
 	
 	/**
-	 * ¼ÆËã×ÔÏà¹ØµÄº¯Êı Tho(k)=Grma(k)/Grma(0)
-	 * @param dataArray ÊıÁĞ
-	 * @param order ½×Êı
+	 * è®¡ç®—è‡ªç›¸å…³çš„å‡½æ•° Tho(k)=Grma(k)/Grma(0)
+	 * @param dataArray æ•°åˆ—
+	 * @param order é˜¶æ•°
 	 * @return
 	 */
 	public double[] autocorData(double[] dataArray,int order)
 	{
 		double[] autoCor=new double[order+1];
-		double varData=this.varerrData(dataArray);//±ê×¼»¯¹ıºóµÄ·½²î
+		double varData=this.varerrData(dataArray);//æ ‡å‡†åŒ–è¿‡åçš„æ–¹å·®
 		
 		for(int i=0;i<=order;i++)
 		{
@@ -65,7 +65,7 @@ public class ARMAMath
  * Grma
  * @param dataArray
  * @param order
- * @return ĞòÁĞµÄ×ÔÏà¹ØÏµÊı
+ * @return åºåˆ—çš„è‡ªç›¸å…³ç³»æ•°
  */
 	public double[] autocorGrma(double[] dataArray,int order)
 	{
@@ -84,7 +84,7 @@ public class ARMAMath
 	}
 	
 /**
- * ÇóÆ«×ÔÏà¹ØÏµÊı
+ * æ±‚åè‡ªç›¸å…³ç³»æ•°
  * @param dataArray
  * @param order
  * @return
@@ -100,13 +100,13 @@ public class ARMAMath
 		return parautocor;
 	}
 /**
- * ²úÉúToplize¾ØÕó
+ * äº§ç”ŸToplizeçŸ©é˜µ
  * @param dataArray
  * @param order
  * @return
  */
 	public double[][] toplize(double[] dataArray,int order)
-	{//·µ»Øtoplize¶şÎ¬Êı×é
+	{//è¿”å›toplizeäºŒç»´æ•°ç»„
 		double[][] toplizeMatrix=new double[order][order];
 		double[] atuocorr=this.autocorData(dataArray,order);
 
@@ -128,20 +128,20 @@ public class ARMAMath
 	}
 
 	/**
-	 * ½âMAÄ£ĞÍµÄ²ÎÊı
+	 * è§£MAæ¨¡å‹çš„å‚æ•°
 	 * @param autocorData
 	 * @param q
 	 * @return
 	 */
 	public double[] getMApara(double[] autocorData,int q)
 	{
-		double[] maPara=new double[q+1];//µÚÒ»¸ö´æ·ÅÔëÉù²ÎÊı£¬ºóÃæq¸ö´æ·Åma²ÎÊısigma2,ma1,ma2...
+		double[] maPara=new double[q+1];//ç¬¬ä¸€ä¸ªå­˜æ”¾å™ªå£°å‚æ•°ï¼Œåé¢qä¸ªå­˜æ”¾maå‚æ•°sigma2,ma1,ma2...
 		double[] tempmaPara=maPara;
 		double temp=0;
 		boolean iterationFlag=true;
-		//½â·½³Ì×é
-		//µü´ú·¨½â·½³Ì×é
-		maPara[0]=1;//³õÊ¼»¯
+		//è§£æ–¹ç¨‹ç»„
+		//è¿­ä»£æ³•è§£æ–¹ç¨‹ç»„
+		maPara[0]=1;//åˆå§‹åŒ–
 		while(iterationFlag)
 		{
 			for(int i=1;i<maPara.length;i++)
@@ -175,7 +175,7 @@ public class ARMAMath
 		return maPara;
 	}
 	/**
-	 * ¼ÆËã×Ô»Ø¹éÏµÊı
+	 * è®¡ç®—è‡ªå›å½’ç³»æ•°
 	 * @param dataArray
 	 * @param p
 	 * @param q
@@ -183,10 +183,10 @@ public class ARMAMath
 	 */
 	public double[] parcorrCompute(double[] dataArray,int p,int q)
 	{
-		double[][] toplizeArray=new double[p][p];//p½×toplize¾ØÕó£»
+		double[][] toplizeArray=new double[p][p];//pé˜¶toplizeçŸ©é˜µï¼›
 		
-		double[] atuocorr=this.autocorData(dataArray,p+q);//·µ»Øp+q½×µÄ×ÔÏà¹Øº¯Êı
-		double[] autocorrF=this.autocorGrma(dataArray, p+q);//·µ»Øp+q½×µÄ×ÔÏà¹ØÏµÊıÊı
+		double[] atuocorr=this.autocorData(dataArray,p+q);//è¿”å›p+qé˜¶çš„è‡ªç›¸å…³å‡½æ•°
+		double[] autocorrF=this.autocorGrma(dataArray, p+q);//è¿”å›p+qé˜¶çš„è‡ªç›¸å…³ç³»æ•°æ•°
 		for(int i=1;i<=p;i++)
 		{
 			int k=1;
@@ -202,8 +202,8 @@ public class ARMAMath
 			}
 		}
 		
-	    Matrix toplizeMatrix = new Matrix(toplizeArray);//ÓÉ¶şÎ»Êı×é×ª»»³É¶şÎ¬¾ØÕó
-	    Matrix toplizeMatrixinverse=toplizeMatrix.inverse();//¾ØÕóÇóÄæÔËËã
+	    Matrix toplizeMatrix = new Matrix(toplizeArray);//ç”±äºŒä½æ•°ç»„è½¬æ¢æˆäºŒç»´çŸ©é˜µ
+	    Matrix toplizeMatrixinverse=toplizeMatrix.inverse();//çŸ©é˜µæ±‚é€†è¿ç®—
 		
 	    double[] temp=new double[p];
 	    for(int i=1;i<=p;i++)
@@ -213,9 +213,9 @@ public class ARMAMath
 	    
 		Matrix autocorrMatrix=new Matrix(temp, p);
 		Matrix parautocorDataMatrix=toplizeMatrixinverse.times(autocorrMatrix); //  [Fi]=[toplize]x[autocorr]';
-		//¾ØÕó¼ÆËã½á¹ûÓ¦¸ÃÊÇ°´ÕÕ[a b c]'  ÁĞÏòÁ¿´æ´¢µÄ
+		//çŸ©é˜µè®¡ç®—ç»“æœåº”è¯¥æ˜¯æŒ‰ç…§[a b c]'  åˆ—å‘é‡å­˜å‚¨çš„
 		//System.out.println("row="+parautocorDataMatrix.getRowDimension()+"  Col="+parautocorDataMatrix.getColumnDimension());
-		//parautocorDataMatrix.print(p, 2);//(Êä³ö¼¸ĞĞ,Ğ¡Êıµãºó±£ÁôÎ»Êı)
+		//parautocorDataMatrix.print(p, 2);//(è¾“å‡ºå‡ è¡Œ,å°æ•°ç‚¹åä¿ç•™ä½æ•°)
 		//System.out.println(parautocorDataMatrix.get(p-1,0));
 		
 		double[] result=new double[parautocorDataMatrix.getRowDimension()+1];
@@ -224,17 +224,17 @@ public class ARMAMath
 			result[i]=parautocorDataMatrix.get(i,0);
 		}
 		
-		//¹ÀËãsigmat2
+		//ä¼°ç®—sigmat2
 		double sum2=0;
 		for(int i=0;i<p;i++)
 			for(int j=0;j<p;j++)
 			{
 				sum2+=result[i]*result[j]*autocorrF[Math.abs(i-j)];
 			}
-		result[result.length-1]=autocorrF[0]-sum2; //resultÊı×é×îºóÒ»¸ö´æ´¢¸ÉÈÅ¹À¼ÆÖµ
+		result[result.length-1]=autocorrF[0]-sum2; //resultæ•°ç»„æœ€åä¸€ä¸ªå­˜å‚¨å¹²æ‰°ä¼°è®¡å€¼
 		
 		
-			return result;   //·µ»Ø0ÁĞµÄ×îºóÒ»¸ö¾ÍÊÇk½×µÄÆ«×ÔÏà¹ØÏµÊı pcorr[k]=·µ»ØÖµ
+			return result;   //è¿”å›0åˆ—çš„æœ€åä¸€ä¸ªå°±æ˜¯ké˜¶çš„åè‡ªç›¸å…³ç³»æ•° pcorr[k]=è¿”å›å€¼
 	}
 
 	

@@ -8,9 +8,9 @@ public class MA {
 	int q;
 	ARMAMath armamath=new ARMAMath();
 	
-	/** MAÄ£ĞÍ
-	 * @param stdoriginalData //Ô¤´¦Àí¹ıºóµÄÊı¾İ
-	 * @param q //qÎªMAÄ£ĞÍ½×Êı
+	/** MAæ¨¡å‹
+	 * @param stdoriginalData //é¢„å¤„ç†è¿‡åçš„æ•°æ®
+	 * @param q //qä¸ºMAæ¨¡å‹é˜¶æ•°
 	 */
 	public MA(double [] stdoriginalData,int q)
 	{
@@ -18,14 +18,14 @@ public class MA {
 		this.q=q;
 	}
 /**
- * ·µ»ØMAÄ£ĞÍ²ÎÊı
+ * è¿”å›MAæ¨¡å‹å‚æ•°
  * @return
  */
 	public Vector<double[]> MAmodel()
 	{
 		Vector<double[]> v=new Vector<double[]>();
 		v.add(armamath.getMApara(armamath.autocorGrma(stdoriginalData,q), q));
-		return v;//ÄÃµ½MAÄ£ĞÍÀïÃæµÄ²ÎÊıÖµ
+		return v;//æ‹¿åˆ°MAæ¨¡å‹é‡Œé¢çš„å‚æ•°å€¼
 	}
 		
 	

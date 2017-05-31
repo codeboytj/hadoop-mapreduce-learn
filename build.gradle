@@ -2,12 +2,31 @@ group 'cumt.tj.learn'
 version '1.0-SNAPSHOT'
 
 apply plugin: 'java'
+//apply plugin: 'com.github.johnrengelman.shadow'
+//
+//buildscript {
+//    repositories {
+//        mavenCentral()
+//    }
+//    dependencies {
+//        classpath 'com.github.jengelman.gradle.plugins:shadow:1.2.4'
+//    }
+//}
 
 sourceCompatibility = 1.8
 
 repositories {
     mavenCentral()
 }
+
+//shadowJar {
+//    baseName = 'hadoop-mapreduce'
+//    classifier = null
+//    version = null
+//    dependencies {
+//        include(dependency(group: 'gov.nist.math', name: 'jama', version: '1.0.3'))
+//    }
+//}
 
 dependencies {
     // https://mvnrepository.com/artifact/org.apache.hadoop/hadoop-common
@@ -37,6 +56,20 @@ dependencies {
     //java arma模型实现的依赖
     // https://mvnrepository.com/artifact/gov.nist.math/jama
     compile group: 'gov.nist.math', name: 'jama', version: '1.0.3'
+
+    //hbase依赖
+    // https://mvnrepository.com/artifact/org.apache.hbase/hbase-client
+//    compile group: 'org.apache.hbase', name: 'hbase-client', version: '1.2.5'
+// https://mvnrepository.com/artifact/org.apache.hbase/hbase
+//    compile group: 'org.apache.hbase', name: 'hbase', version: '1.2.5'
+    // https://mvnrepository.com/artifact/org.apache.hbase/hbase-server
+//    compile group: 'org.apache.hbase', name: 'hbase-server', version: '1.2.5'
+    // https://mvnrepository.com/artifact/org.apache.hbase/hbase-server
+    //mapreduce读写hbase数据时的依赖
+    compile group: 'org.apache.hbase', name: 'hbase-server', version: '1.2.5'
+
+
+
 
     testCompile group: 'junit', name: 'junit', version: '4.11'
 }
